@@ -36,6 +36,7 @@
 
 @synthesize notificationMessage;
 @synthesize isInline;
+@synthesize clicked;
 @synthesize coldstart;
 
 @synthesize callbackId;
@@ -334,6 +335,9 @@
                 });
             }
 
+            dispatch_async(dispatch_get_main_queue(), ^{
+               [self performSelector:@selector(receiveNotifications) withObject:nil afterDelay: 0.5];
+            });
         }];
     }
 }
@@ -414,6 +418,17 @@
     [self failWithMessage:self.callbackId withMsg:@"" withError:error];
 }
 
+- (void)receiveNotifications {
+    [[UNUserNotificationCenter currentNotificationCenter]
+        getDeliveredNotificationsWithCompletionHandler:^(NSArray<UNNotification *> *requests) {
+            for (UNNotification* not in requests) {
+                NSDictionary *userInfo = not.request.content.userInfo;
+                self.notificationMessage = userInfo;
+                [self notificationReceived];
+            }
+    }];
+}
+
 - (void)notificationReceived {
     NSLog(@"Notification received");
 
@@ -476,6 +491,11 @@
             [additionalData setObject:[NSNumber numberWithBool:NO] forKey:@"coldstart"];
         }
 
+        if (clicked) {
+            [additionalData setObject:[NSNumber numberWithBool:NO] forKey:@"dismissed"];
+        }
+        self.clicked = NO;
+
         [message setObject:additionalData forKey:@"additionalData"];
 
         // send notification message
@@ -533,6 +553,7 @@
 - (void)clearAllNotifications:(CDVInvokedUrlCommand *)command
 {
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+    [[UNUserNotificationCenter currentNotificationCenter] removeAllDeliveredNotifications];
 
     NSString* message = [NSString stringWithFormat:@"cleared all notifications"];
     CDVPluginResult *commandResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:message];

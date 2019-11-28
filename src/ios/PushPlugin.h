@@ -37,6 +37,7 @@
     BOOL    isInline;
     NSString *notificationCallbackId;
     NSString *callback;
+    BOOL    clicked;
     BOOL    clearBadge;
 
     NSMutableDictionary *handlerObj;
@@ -51,6 +52,7 @@
 
 @property (nonatomic, strong) NSDictionary *notificationMessage;
 @property BOOL isInline;
+@property BOOL clicked;
 @property BOOL coldstart;
 @property BOOL clearBadge;
 @property (nonatomic, strong) NSMutableDictionary *handlerObj;
@@ -66,6 +68,7 @@
 
 - (void)setNotificationMessage:(NSDictionary *)notification;
 - (void)notificationReceived;
+- (void)receiveNotifications;
 
 - (void)willSendDataMessageWithID:(NSString *)messageID error:(NSError *)error;
 - (void)didSendDataMessageWithID:(NSString *)messageID;
