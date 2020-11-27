@@ -6,7 +6,7 @@
 //
 //
 
-#import "AppDelegate.h"
+#import <Cordova/AppDelegate.h>
 
 @interface AppDelegate (notification)
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken;
